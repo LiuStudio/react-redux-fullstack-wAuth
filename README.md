@@ -103,6 +103,9 @@ export default bookshelf(knex(knexConfig.development));
 
 `npm install --save bcrypt`
 
+14, create 'model/user.js' file for sql model
+15, in routes/user.js perform create user and sql save user action
+
 
 
 
