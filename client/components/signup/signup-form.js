@@ -1,7 +1,6 @@
 import React from 'react';
 import Timezones from '../../data/timezones';
 import _ from 'lodash';
-import classnames from 'classnames';
 import validateInput from '../../../server/sharefolder/validations/signup';
 import TextFieldGroup from '../common/text-field-group';
 import PullDownList from '../common/pulldown-list';
@@ -31,7 +30,9 @@ class SignupForm extends React.Component{
 	}
 
 	isValid(){
+		
 		const {errors, isValid} = validateInput(this.state);
+		
 		if (!isValid){
 			this.setState({errors});
 		}
@@ -42,12 +43,29 @@ class SignupForm extends React.Component{
 	onSubmit(e){
 		
 		e.preventDefault();
+
 		if (this.isValid()){
 		this.setState({errors: {}, isLoading: true });
 		//axios.post('/api/users', {user: this.state});
-		this.props.userSignupRequest(this.state).then(
-			() => {})
-			.catch( error => {this.setState({ errors:error.response.data, isLoading: false })}
+		this.props.userSignupRequest(this.state)
+		.then(	(response) => {
+				
+				this.props.addFlashMessage({
+					type: 'success',
+					text: 'You signed up successfully, Welcome!'
+				});
+				this.context.router.push('/');
+			})
+		.catch(function (error){
+				console.log("error:  ", error);
+				console.log("error.message: ", error.message);
+        		console.log("error.code: ", error.code);
+        		console.log("error.config: ", error.config);
+        		console.log("error.response: ", error.response);
+        		//console.log("error.response.data: ", error.response.data);
+        		console.log(this);
+				//this.setState({ errors:error.response.data, isLoading: false });
+			  }
 			);
 		}
 	}
@@ -63,7 +81,7 @@ class SignupForm extends React.Component{
 				<h1> Join our community</h1>
 
 				<TextFieldGroup
-					error={errors.username}
+					error={errors.username || ''}
 					label="Username"
 					onChange={this.onChange}
 					value={this.state.username}
@@ -71,7 +89,7 @@ class SignupForm extends React.Component{
 				/>	
 
 				<TextFieldGroup
-					error={errors.email}
+					error={errors.email || ''}
 					label="Email"
 					onChange={this.onChange}
 					value={this.state.email}
@@ -79,7 +97,7 @@ class SignupForm extends React.Component{
 				/>
 
 				<TextFieldGroup
-					error={errors.password}
+					error={errors.password || ''}
 					label="Password"
 					onChange={this.onChange}
 					value={this.state.password}
@@ -87,7 +105,7 @@ class SignupForm extends React.Component{
 				/>
 
 				<TextFieldGroup
-					error={errors.passwordConfirmation}
+					error={errors.passwordConfirmation || ''}
 					label="PasswordConfirmation"
 					onChange={this.onChange}
 					value={this.state.passwordConfirmation}
@@ -118,8 +136,12 @@ class SignupForm extends React.Component{
 
 
 SignupForm.propTypes = {
-	userSignupRequest: React.PropTypes.func.isRequired
+	userSignupRequest: React.PropTypes.func.isRequired,
+	addFlashMessage: React.PropTypes.func.isRequired
 
 }
 
+SignupForm.contexTypes = {
+	router: React.PropTypes.object.isRequired
+}
 export default SignupForm;

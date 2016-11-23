@@ -28,6 +28,6 @@ export default  function validateInput (data){
 
 	return{
 		errors,
-		isvalid: _.isEmpty(errors)
+		isValid: _.isEmpty(errors)
 	}
 }
